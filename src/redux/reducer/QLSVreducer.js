@@ -6,13 +6,24 @@ const initialState = {
         { maSV: "sv02", hoten: "nguyên văn b", sdt: "123456799", email: "tesk@gamil.com" },
 
     ],
-    sinhVienChiTiec: { maSV: "sv03", hoten: "nguyên văn c", sdt: "19999999", email: "tesk@gamil.com" },
 
+    sinhVienChiTiec: {
+        value: { maSV: "", hoten: "", sdt: "", email: "" },
+        error: { maSV: "", hoten: "", sdt: "", email: "" },
+    }
 
 }
 
 export const QLSVreducer = (state = initialState, action) => {
     switch (action.type) {
+
+        case "HANDLE_CHANGE":
+            state.sinhVienChiTiec = action.sinhVienChiTiec;
+
+
+
+
+            return { ...state }
         case "THEM_SV":
 
 
@@ -29,12 +40,21 @@ export const QLSVreducer = (state = initialState, action) => {
 
 
         case "XEM_CT":
-                state.sinhVienChiTiec = action.svChiTiec
-
+            state.sinhVienChiTiec.value = action.svChiTiec
+            state.sinhVienChiTiec = { ...state.sinhVienChiTiec }
 
 
             return { ...state }
+        case "CAP_NHAT":
+            
+                let svFindIndex = state.mangSV.findIndex(sv => sv.maSV === action.sinhVienCapNhat.maSV)
+                if (svFindIndex !== -1) {
+                    state.mangSV[svFindIndex] = action.sinhVienCapNhat;
 
+                }
+                state.mangSV = [...state.mangSV]
+
+            return { ...state }
 
         default:
             return state

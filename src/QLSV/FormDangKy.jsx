@@ -4,21 +4,21 @@ import { connect } from 'react-redux'
 class FormDangKy extends Component {
 
 
-    state = {
-        value: { maSV: "", hoten: "", sdt: "", email: "" },
-        error: { maSV: "", hoten: "", sdt: "", email: "" },
-    }
+    // state = {
+    //     value: { maSV: "", hoten: "", sdt: "", email: "" },
+    //     error: { maSV: "", hoten: "", sdt: "", email: "" },
+    // }
 
 
     inputChange = (event) => {
         let { value, name } = event.target;
 
 
-        let newValue = { ...this.state.value, [name]: value }
-        console.log(newValue);
+        let newValue = { ...this.props.sinhVienChiTiec.value, [name]: value }
 
 
-        let newError = { ...this.state.error, }
+
+        let newError = { ...this.props.sinhVienChiTiec.error, }
         let errorMSG = "";
         if (value.trim() == "") {
             errorMSG = "nội dung không được để trống";
@@ -45,13 +45,16 @@ class FormDangKy extends Component {
 
 
         newError[name] = errorMSG
+        let action = {
+            type: "HANDLE_CHANGE",
+            sinhVienChiTiec: {
+                value: newValue,
+                error: newError,
+            }
+        }
+        this.props.dispatch(action)
 
 
-        this.setState({
-            value: newValue,
-            error: newError,
-
-        })
 
 
 
@@ -59,14 +62,14 @@ class FormDangKy extends Component {
     handleSubmit = (event) => {
         event.preventDefault();
         let isValid = true;
-        for (let key in this.state.error) {
-            if (this.state.error[key] !== "") {
+        for (let key in this.props.sinhVienChiTiec.error) {
+            if (this.props.sinhVienChiTiec.error[key] !== "") {
                 isValid = false;
                 break;
             }
         }
-        for (let key in this.state.value) {
-            if (this.state.value[key] === "") {
+        for (let key in this.props.sinhVienChiTiec.value) {
+            if (this.props.sinhVienChiTiec.value[key] === "") {
                 isValid = false;
                 break;
             }
@@ -77,9 +80,9 @@ class FormDangKy extends Component {
 
         }
 
-        let action ={
-            type:"THEM_SV",
-            sinhVien :this.state.value,
+        let action = {
+            type: "THEM_SV",
+            sinhVien: this.props.sinhVienChiTiec.value,
 
         }
         this.props.dispatch(action)
@@ -94,7 +97,7 @@ class FormDangKy extends Component {
 
 
     render() {
-        let {maSV,hoten,sdt,email} = this.props.sinhVienChiTiec
+        let { maSV, hoten, sdt, email } = this.props.sinhVienChiTiec.value;
         return (
             <div className='py-5'>
                 <form onSubmit={(event) => {
@@ -105,30 +108,37 @@ class FormDangKy extends Component {
                             <input onChange={(event) => {
                                 this.inputChange(event)
                             }} value={maSV} type="text" name='maSV' className="form-control" placeholder="mã sinh viên" />
-                            <p className='text-danger'>{this.state.error.maSV}</p>
+                            <p className='text-danger'>{this.props.sinhVienChiTiec.error.maSV}</p>
                         </div>
                         <div className="col-6  mb-5">
                             <input onChange={(event) => {
                                 this.inputChange(event)
-                            }}  value={hoten} type="text" name='hoten' className="form-control" placeholder="Họ Tên" />
-                            <p className='text-danger'>{this.state.error.hoten}</p>
+                            }} value={hoten} type="text" name='hoten' className="form-control" placeholder="Họ Tên" />
+                            <p className='text-danger'>{this.props.sinhVienChiTiec.error.hoten}</p>
                         </div>
                         <div className="col-6  mb-5">
                             <input onChange={(event) => {
                                 this.inputChange(event)
                             }} value={sdt} typeinput="sdt" type="text" name='sdt' className="form-control" placeholder="số điện thoại" />
-                            <p className='text-danger'>{this.state.error.sdt}</p>
+                            <p className='text-danger'>{this.props.sinhVienChiTiec.error.sdt}</p>
                         </div>
                         <div className="col-6  mb-5">
                             <input onChange={(event) => {
                                 this.inputChange(event)
                             }} value={email} typeinput="email" type="text" name='email' className="form-control" placeholder="Email" />
-                            <p className='text-danger'>{this.state.error.email}</p>
+                            <p className='text-danger'>{this.props.sinhVienChiTiec.error.email}</p>
                         </div>
                     </div>
                     <div>
                         <button className='btn btn-info mx-5' >thêm sinh viên</button>
-                        <button className='btn btn-success mx-5' >cập nhật sinh viên</button>
+                        <button type='button' className='btn btn-success mx-5' onClick={() => {
+                            let action = {
+                                type: "CAP_NHAT",
+                                sinhVienCapNhat: this.props.sinhVienChiTiec.value,
+                            }
+                            this.props.dispatch(action)
+
+                        }} >cập nhật sinh viên</button>
                     </div>
                 </form>
 
@@ -140,7 +150,7 @@ class FormDangKy extends Component {
 
 const mapStateToProps = (rootReducer) => {
     return {
-        sinhVienChiTiec : rootReducer.QLSVreducer.sinhVienChiTiec
+        sinhVienChiTiec: rootReducer.QLSVreducer.sinhVienChiTiec
     }
 }
 
